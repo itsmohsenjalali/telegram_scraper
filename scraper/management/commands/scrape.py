@@ -60,9 +60,9 @@ class Command(BaseCommand):
             elif options['user_message']:
                 self.stdout.write(self.style.SUCCESS('Start Scraping Users in SuperGroups With Message...'))
                 crawl.get_users_in_group_with_message(client)
-            elif options['check_deep_crawl']:
-                self.stdout.write(self.style.SUCCESS('Start Checking Group For Deep Crawl...'))
-                crawl.check_group_deep_crawl(client)
+            # elif options['check_deep_crawl']:
+            #     self.stdout.write(self.style.SUCCESS('Start Checking Group For Deep Crawl...'))
+            #     crawl.check_group_deep_crawl(client)
             elif options['clean_db']:
                 self.stdout.write(self.style.SUCCESS('Start Cleaning Database Zero Member Group And Fake User...'))
                 crawl.clean_db()
