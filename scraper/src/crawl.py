@@ -125,4 +125,5 @@ def get_users_in_group_with_message(client: TelegramClient):
                     }
                 )
                 group.members.add(user.id)
+                time.sleep(0.1)
                 bar()
