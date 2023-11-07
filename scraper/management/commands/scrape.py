@@ -21,9 +21,24 @@ class Command(BaseCommand):
             help='Scrape Users in Groups'
         )
         parser.add_argument(
-            '--user-message',
+            '--user_message',
             action='store_true',
             help='Scrape Users in SuperGroups With Message'
+        )
+        parser.add_argument(
+            '--check_deep_crawl',
+            action='store_true',
+            help='Check Deep Crawl Groups'
+        )
+        parser.add_argument(
+            '--clean_db',
+            action='store_true',
+            help='Clean Database'
+        )
+        parser.add_argument(
+            '--clean_channel',
+            action='store_true',
+            help='Clean Channel'
         )
 
     def handle(self, *args, **options):
@@ -42,7 +57,15 @@ class Command(BaseCommand):
             elif options['user']:
                 self.stdout.write(self.style.SUCCESS('Start Scraping Users in Groups...'))
                 crawl.get_users_in_group(client)
-            elif options['user-message']:
+            elif options['user_message']:
                 self.stdout.write(self.style.SUCCESS('Start Scraping Users in SuperGroups With Message...'))
                 crawl.get_users_in_group_with_message(client)
-        
+            elif options['check_deep_crawl']:
+                self.stdout.write(self.style.SUCCESS('Start Checking Group For Deep Crawl...'))
+                crawl.check_group_deep_crawl(client)
+            elif options['clean_db']:
+                self.stdout.write(self.style.SUCCESS('Start Cleaning Database Zero Member Group And Fake User...'))
+                crawl.clean_db()
+            elif options['clean_channel']:
+                self.stdout.write(self.style.SUCCESS('Start Cleaning Channel...'))
+                crawl.clean_channel(client)

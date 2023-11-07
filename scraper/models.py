@@ -17,6 +17,7 @@ class TelegramGroup(models.Model):
     username = models.CharField(max_length=255, null=True, blank=True)
     is_super_group = models.BooleanField(default=False)
     participants_count = models.IntegerField(default=0)
+    deep_crwal = models.BooleanField(default=False)
     telegram_account = models.ManyToManyField(TelegramAccount, related_name='groups', blank=True)
 
     def __str__(self) -> str:

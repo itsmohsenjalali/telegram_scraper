@@ -5,7 +5,8 @@ from django_admin_listfilter_dropdown.filters import DropdownFilter
 
 class TelegramGroupAdmin(admin.ModelAdmin):
     search_fields = ('title',)
-    list_display = ('id', 'title', 'participants_count')
+    list_display = ('id', 'title', 'participants_count', 'deep_crwal', 'is_super_group')
+    list_filter = ('deep_crwal', 'is_super_group')
     sortable_by = ('id', 'title', 'participants_count')
 
 class TelegramUserAdmin(admin.ModelAdmin):
