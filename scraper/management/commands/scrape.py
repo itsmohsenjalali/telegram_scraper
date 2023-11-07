@@ -2,6 +2,7 @@ from django.core.management.base import BaseCommand
 from telethon.sync import TelegramClient
 from scraper.src import crawl
 from scraper.models import TelegramAccount
+from django.conf import settings
 # from scraper.models import ScraperStatus
 # Import your scraping functions or classes here
 
@@ -27,8 +28,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         account = TelegramAccount.objects.filter()
+        session_path = settings.BASE_DIR + '/sessions/' + acc.phone_number
         for acc in account:
-            client = TelegramClient("+" + acc.phone_number, acc.api_id, acc.api_hash)
+            client = TelegramClient(session_path, acc.api_id, acc.api_hash)
             client.connect()
             if not client.is_user_authorized():
                 client.send_code_request(acc.phone_number)
