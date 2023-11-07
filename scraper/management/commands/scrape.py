@@ -28,9 +28,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         account = TelegramAccount.objects.filter()
-        session_path = settings.BASE_DIR + '/sessions/' + acc.phone_number
+        session_path = str(settings.BASE_DIR) + '/sessions/'
         for acc in account:
-            client = TelegramClient(session_path, acc.api_id, acc.api_hash)
+            client = TelegramClient(session_path + acc.phone_number, acc.api_id, acc.api_hash)
             client.connect()
             if not client.is_user_authorized():
                 client.send_code_request(acc.phone_number)

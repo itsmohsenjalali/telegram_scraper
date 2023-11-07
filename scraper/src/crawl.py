@@ -46,7 +46,7 @@ def get_conversations(client: TelegramClient):
                         'phone_number': conversation.entity.phone
                     }
                 )
-            time.sleep(0.5)
+            # time.sleep(0.5)
             bar()
 
 
@@ -56,18 +56,19 @@ def get_users_in_group(client: TelegramClient):
         users = client.get_participants(group.id)
         with alive_bar(len(users), title=group.title) as bar:
             for user in users:
-                TelegramUser.objects.update_or_create(
-                    id=user.id,
-                    defaults={
-                        'username': user.username,
-                        'first_name': user.first_name,
-                        'last_name': user.last_name,
-                        'phone_number': user.phone
-                    }
-                )
-                group.members.add(user.id)
-                time.sleep(0.5)
-                bar()
+                if user.bot != True:
+                    TelegramUser.objects.update_or_create(
+                        id=user.id,
+                        defaults={
+                            'username': user.username,
+                            'first_name': user.first_name,
+                            'last_name': user.last_name,
+                            'phone_number': user.phone
+                        }
+                    )
+                    group.members.add(user.id)
+                    # time.sleep(0.5)
+                    bar()
 
 def get_users_in_group_with_message(client: TelegramClient):
     groups = TelegramGroup.objects.all()
