@@ -114,16 +114,20 @@ def get_users_in_group_with_message(client: TelegramClient):
         messages = client.iter_messages(group.id)
         with alive_bar(title=group.title) as bar:
             for message in messages:
-                user = client.get_entity(message.sender_id)
-                TelegramUser.objects.update_or_create(
-                    id=user.id,
-                    defaults={
-                        'username': user.username,
-                        'first_name': user.first_name,
-                        'last_name': user.last_name,
-                        'phone_number': user.phone
-                    }
-                )
-                group.members.add(user.id)
-                time.sleep(0.1)
+                try:
+                    user = client.get_entity(message.sender_id)
+                    TelegramUser.objects.update_or_create(
+                        id=user.id,
+                        defaults={
+                            'username': user.username,
+                            'first_name': user.first_name,
+                            'last_name': user.last_name,
+                            'phone_number': user.phone
+                        }
+                    )
+                    group.members.add(user.id)
+                    time.sleep(0.1)
+                except Exception as e:
+                    print(e)
+                    time.sleep(144)
                 bar()
