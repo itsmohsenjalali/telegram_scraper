@@ -1,11 +1,11 @@
 from telethon.sync import TelegramClient
-from telethon.functions import channels
-from telethon.tl.functions.channels import GetFullChannelRequest
+from telethon.tl.functions.channels import InviteToChannelRequest
 from telethon.types import Chat, User, Channel
 from scraper.models import TelegramGroup, TelegramAccount, TelegramUser
+from marketing.models import MarketingPlan
 from alive_progress import alive_bar
 import time
-
+import asyncio
 
 def get_conversations(client: TelegramClient):
     conversations = client.iter_dialogs()
@@ -126,8 +126,46 @@ def get_users_in_group_with_message(client: TelegramClient):
                         }
                     )
                     group.members.add(user.id)
-                    time.sleep(0.1)
+                    time.sleep(0.5)
                 except Exception as e:
                     print(e)
-                    time.sleep(144)
+                    time.sleep(150)
+                    print("start again")
                 bar()
+
+async def invite_users_to_channel(client: TelegramClient, marketing_plan: MarketingPlan):
+    channel = client.get_entity(marketing_plan.target_group.id)
+    for group in marketing_plan.selected_group.all():
+        users = TelegramUser.objects.filter(groups__id=group.id, can_join_groups=True).order_by('id')
+        for user in users:
+            await asyncio.sleep(1)
+            try:
+                if user.username == None:
+                    user_entity = client.get_entity(user.id)
+                    client(InviteToChannelRequest(channel, [user_entity]))
+                else:
+                    client(InviteToChannelRequest(channel, [user.username]))
+                print("Adding {} to {}".format(user.username, marketing_plan.target_group.title))
+            except Exception as e:
+                print('Failed to add {} to {}'.format(user.username, marketing_plan.target_group.title))
+                if 'privacy' in str(e):
+                    user.can_join_groups = False
+                    user.save()
+                    continue
+                elif 'Bots' in str(e):
+                    user.can_join_groups = False
+                    user.is_bot = True
+                    user.save()
+                    continue
+                elif 'too many channels/supergroups' in str(e):
+                    user.is_spam = True
+                    user.save()
+                    continue
+                elif 'A wait of' in str(e) or 'Too many requests' in str(e):
+                    await asyncio.sleep(1684)
+
+def invite_user_to_group(client: TelegramClient, selected_group):
+    pass
+
+def send_message_to_user(client: TelegramClient, selected_group):
+    pass

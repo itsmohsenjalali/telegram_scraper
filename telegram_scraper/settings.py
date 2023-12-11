@@ -38,8 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'scraper',
     'django_admin_listfilter_dropdown',
+    'scraper',
+    'marketing',
 ]
 
 MIDDLEWARE = [
