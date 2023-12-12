@@ -133,12 +133,12 @@ def get_users_in_group_with_message(client: TelegramClient):
                     print("start again")
                 bar()
 
-async def invite_users_to_channel(client: TelegramClient, marketing_plan: MarketingPlan):
+def invite_users_to_channel(client: TelegramClient, marketing_plan: MarketingPlan):
     channel = client.get_entity(marketing_plan.target_group.id)
     for group in marketing_plan.selected_group.all():
         users = TelegramUser.objects.filter(groups__id=group.id, can_join_groups=True).order_by('id')
         for user in users:
-            await asyncio.sleep(1)
+            time.sleep(2)
             try:
                 if user.username == None:
                     user_entity = client.get_entity(user.id)
@@ -162,7 +162,7 @@ async def invite_users_to_channel(client: TelegramClient, marketing_plan: Market
                     user.save()
                     continue
                 elif 'A wait of' in str(e) or 'Too many requests' in str(e):
-                    await asyncio.sleep(1684)
+                    time.sleep(1684)
 
 def invite_user_to_group(client: TelegramClient, selected_group):
     pass
