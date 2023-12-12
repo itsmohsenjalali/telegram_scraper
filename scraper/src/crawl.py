@@ -165,6 +165,7 @@ def invite_users_to_channel(client: TelegramClient, marketing_plan: MarketingPla
                     user.save()
                     continue
                 elif 'A wait of' in str(e) or 'Too many requests' in str(e):
+                    print(e)
                     print("too many request 30 min")
                     time.sleep(1800)
 
