@@ -134,7 +134,7 @@ def get_users_in_group_with_message(client: TelegramClient):
                 bar()
 
 def invite_users_to_channel(client: TelegramClient, marketing_plan: MarketingPlan):
-    channel = client.get_entity(marketing_plan.target_group.id)
+    channel = client.get_entity(marketing_plan.target_group.username)
     for group in marketing_plan.selected_group.all():
         users = TelegramUser.objects.filter(groups__id=group.id, can_join_groups=True).order_by('id')
         for user in users:
@@ -149,20 +149,24 @@ def invite_users_to_channel(client: TelegramClient, marketing_plan: MarketingPla
             except Exception as e:
                 print('Failed to add {} to {}'.format(user.username, marketing_plan.target_group.title))
                 if 'privacy' in str(e):
+                    print("user privacy banned from adding to group")
                     user.can_join_groups = False
                     user.save()
                     continue
                 elif 'Bots' in str(e):
+                    print("user is bot")
                     user.can_join_groups = False
                     user.is_bot = True
                     user.save()
                     continue
                 elif 'too many channels/supergroups' in str(e):
+                    print("user is spam")
                     user.is_spam = True
                     user.save()
                     continue
                 elif 'A wait of' in str(e) or 'Too many requests' in str(e):
-                    time.sleep(1684)
+                    print("too many request 30 min")
+                    time.sleep(1800)
 
 def invite_user_to_group(client: TelegramClient, selected_group):
     pass
