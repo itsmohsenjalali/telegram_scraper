@@ -97,17 +97,6 @@ def get_users_in_group(client: TelegramClient):
                 except Exception as e:
                     print(e)
 
-# def check_group_deep_crawl(client: TelegramClient):
-#     groups = TelegramGroup.objects.filter(is_super_group=True, deep_crwal=False)
-#     with alive_bar(len(groups)) as bar:
-#         for group in groups:
-#             if group.is_super_group == True:
-#                 participants_count = len(client.get_participants(group.id))
-#                 if participants_count < group.participants_count:
-#                     group.deep_crwal = True
-#                     group.save()
-#             bar()
-
 def get_users_in_group_with_message(client: TelegramClient):
     groups = TelegramGroup.objects.filter(is_super_group=True, deep_crwal=True)
     for group in groups:
