@@ -168,9 +168,52 @@ def invite_users_to_channel(client: TelegramClient, marketing_plan: MarketingPla
                     print(e)
                     print("too many request 30 min")
                     time.sleep(1800)
+                    continue
+                else:
+                    print(e)
+                    print("another error")
+                    continue
 
 def invite_user_to_group(client: TelegramClient, selected_group):
     pass
 
-def send_message_to_user(client: TelegramClient, selected_group):
-    pass
+def send_message_to_user(client: TelegramClient, marketing_plan: MarketingPlan):
+    for group in marketing_plan.selected_group.all():
+        users = TelegramUser.objects.filter(groups__id=group.id, can_join_groups=True).order_by('id')
+        for user in users:
+            time.sleep(2)
+            try:
+                if user.username == None:
+                    user_entity = client.get_entity(user.id)
+                    client.send_message(entity=user_entity,message=marketing_plan.message)
+                else:
+                    user_entity = client.get_entity(user.id)
+                    client.send_message(entity=user_entity,message=marketing_plan.message)
+                print("Sending message to {}".format(user.username))
+            except Exception as e:
+                print('Failed to send message to {}'.format(user.username))
+                if 'privacy' in str(e):
+                    print("user privacy banned from adding to group")
+                    user.can_join_groups = False
+                    user.save()
+                    continue
+                elif 'Bots' in str(e):
+                    print("user is bot")
+                    user.can_join_groups = False
+                    user.is_bot = True
+                    user.save()
+                    continue
+                elif 'too many channels/supergroups' in str(e):
+                    print("user is spam")
+                    user.is_spam = True
+                    user.save()
+                    continue
+                elif 'A wait of' in str(e) or 'Too many requests' in str(e):
+                    print(e)
+                    print("too many request 30 min")
+                    time.sleep(1800)
+                    continue
+                else:
+                    print(e)
+                    print("another error")
+                    continue
