@@ -12,7 +12,7 @@ RUN pip install --upgrade pip
 # Installing dependencies
 RUN pip install gunicorn
 
-COPY telegram_scraper .
+COPY . .
 
 # RUN pip freeze > requirements.txt
 
