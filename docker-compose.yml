@@ -1,0 +1,38 @@
+version: '3.8'
+services:
+  db:
+    image: 'postgres'
+    ports:
+      - 6585:6585
+    environment:
+      - POSTGRES_PASSWORD=123!@#
+      - POSTGRES_DB=scrape
+      - PGPORT=6585
+    volumes:
+      - "./db:/var/lib/postgresql/data"
+  scraper:
+    container_name: scraper
+    build:
+      context: .
+    command: sh -c "
+
+                   python manage.py collectstatic --noinput &&
+                   python manage.py runserver 0.0.0.0:8000
+                  "
+    volumes:
+     - ./telegram_scraper:/opt
+     - ./sessions:/opt/sessions
+    expose:
+      - 8081
+    ports:
+      - 8081:8000
+    environment:
+      - DB_HOST=db
+      - DB_NAME=scrape
+      - DB_USER=postgres
+      - DB_PASSWORD=123!@#
+      - DB_PORT=6585
+      - DEBUG=True
+    restart: on-failure
+    depends_on:
+      - db
